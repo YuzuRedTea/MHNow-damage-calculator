@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MHN Damage Calculator</title>
+    <title>MHNow Dmg Calc by YuzuRedTea</title>
     <style>
         :root {
             --bg-color: #121214;
@@ -53,7 +53,7 @@
             font-size: 0.875rem;
             color: var(--text-muted);
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 12px;
         }
 
         .input-group {
@@ -148,9 +148,15 @@
 <body>
 
 <div class="calculator-card">
-    <h1>MHN Damage Calculator v0.2</h1>
-    <p class="subtitle">Highest Damage Value</p>
-    <p class="subtitle">For now, not accounting for CritFero, hitzone value, motion value</p>
+    <h1>MHN Damage Calculator v0.2.1</h1>
+	<p class="subtitle">
+        <a href="https://linktr.ee/porridgehouseprints" target="_blank" style="color: white; text-decoration: none;">
+            By YuzuRedTea
+        </a>
+		<br>
+    </p>
+    <p class="subtitle">Only calculates highest damage possible</p>
+    <p class="subtitle">NOT accounting for Crit, CritFero, hitzone value, motion value</p>
 
 	<fieldset class="input-group-box">
 		<legend>Weapon Base Stats</legend>
@@ -276,9 +282,6 @@ function calculateDamage() {
 
     // 3. Render the output to the UI
     document.getElementById('finalDamage').innerText = finalDamage;
-    console.log("abc")
-	console.log(totalRaw)
-	console.log("123")
     // 4. Update the technical breakdown text for reference
     <!-- document.getElementById('breakdownText').innerHTML =  -->
         <!-- `Base: (${totalRaw} Raw + ${totalEle} Ele) = ${baseDamageSum}<br>` + -->
