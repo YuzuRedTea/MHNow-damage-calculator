@@ -126,6 +126,23 @@
             margin-top: 8px;
             line-height: 1.4;
         }
+		
+		.input-group-box {
+			border: 1px solid var(--border-color);
+			border-radius: 8px;
+			padding: 16px;
+			margin-bottom: 20px;
+			background-color: rgba(255, 255, 255, 0.02); /* Slight tint for contrast */
+		}
+
+		.input-group-box legend {
+			font-size: 0.85rem;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+			color: var(--accent-color);
+			padding: 0 8px; /* Prevents the border from touching the text */
+		}
     </style>
 </head>
 <body>
@@ -133,59 +150,74 @@
 <div class="calculator-card">
     <h1>MHN Damage Calculator v0.2</h1>
     <p class="subtitle">Highest Damage Value</p>
-    <p class="subtitle">For now, not accounting for Crit, CritFero</p>
+    <p class="subtitle">For now, not accounting for CritFero, hitzone value, motion value</p>
 
-    <!-- Raw Attack Input -->
-    <div class="input-group">
-        <label for="rawAtk">Weapon Raw Attack</label>
-        <input type="number" id="rawAtk" value="800" min="0" oninput="calculateDamage()">
-    </div>
+	<fieldset class="input-group-box">
+		<legend>Weapon Base Stats</legend>
+		<!-- Raw Attack Input -->
+		<div class="input-group">
+			<label for="weaponRawAtk">Raw Attack</label>
+			<input type="number" id="weaponRawAtk" value="1000" min="0" oninput="calculateDamage()">
+		</div>
 
-    <!-- Ele Input -->
-    <div class="input-group">
-        <label for="eleAtk">Weapon Element Attack</label>
-        <input type="number" id="eleAtk" value="400" min="0" oninput="calculateDamage()">
-    </div>
+		<!-- Ele Input -->
+		<div class="input-group">
+			<label for="weaponEleAtk">Element Attack</label>
+			<input type="number" id="weaponEleAtk" value="1000" min="0" oninput="calculateDamage()">
+		</div>
+		
+		<!-- Crit Input -->
+		<!-- <div class="input-group"> -->
+			<!-- <label for="weaponCrit">Crit Chance (%)</label> -->
+			<!-- <input type="number" id="weaponCrit" value="0" min="0" oninput="calculateDamage()"> -->
+		<!-- </div> -->
+	</fieldset>
 
-    <!-- Monster Weakness Toggle -->
-    <div class="input-group">
-        <label for="eleWeakness">Monster Element Weakness</label>
-        <select id="eleWeakness" onchange="calculateDamage()">
-            <option value="1.0">Weak to Element (100% Value)</option>
-            <option value="1.5">Super Weak to Element (150% Value)</option>
-            <option value="0">NOT Weak to Element (0% Value)</option>
-        </select>
-    </div>
+	<fieldset class="input-group-box">
+		<legend>Monster Stats</legend>
+		<!-- Monster Weakness Toggle -->
+		<div class="input-group">
+			<label for="eleWeakness">Monster Element Weakness</label>
+			<select id="eleWeakness" onchange="calculateDamage()">
+				<option value="1.0">Weak to Element (100% Value)</option>
+				<option value="1.5">Super Weak to Element (150% Value)</option>
+				<option value="0">NOT Weak to Element (0% Value)</option>
+			</select>
+		</div>
+	</fieldset>
 
-    <!-- Added Flat Raw Input -->
-    <div class="input-group">
-        <label for="addFlatRaw">Added Flat Raw (e.g. Attack Boost)</label>
-        <input type="number" id="addFlatRaw" value="0" min="0" oninput="calculateDamage()">
-    </div>
+	<fieldset class="input-group-box">
+		<legend>Added Bonus</legend>
+		<!-- Added Flat Raw Input -->
+		<div class="input-group">
+			<label for="addFlatRaw">Added Flat Raw (e.g. Attack Boost)</label>
+			<input type="number" id="addFlatRaw" value="0" min="0" oninput="calculateDamage()">
+		</div>
 
-    <!-- Raw % increase Input -->
-    <div class="input-group">
-        <label for="addRawPercent">Added Raw % (e.g. Burst)</label>
-        <input type="number" id="addRawPercent" value="0" min="0" oninput="calculateDamage()">
-    </div>
+		<!-- Raw % increase Input -->
+		<div class="input-group">
+			<label for="addRawPercent">Added Raw % (e.g. Burst)</label>
+			<input type="number" id="addRawPercent" value="0" min="0" oninput="calculateDamage()">
+		</div>
 
-    <!-- Added Flat Ele Input -->
-    <div class="input-group">
-        <label for="addFlatEle">Added Flat Element (e.g. Fire Attack)</label>
-        <input type="number" id="addFlatEle" value="0" min="0" oninput="calculateDamage()">
-    </div>
+		<!-- Added Flat Ele Input -->
+		<div class="input-group">
+			<label for="addFlatEle">Added Flat Ele (e.g. Fire Attack)</label>
+			<input type="number" id="addFlatEle" value="0" min="0" oninput="calculateDamage()">
+		</div>
 
-    <!-- Ele % increase Input -->
-    <div class="input-group">
-        <label for="addElePercent">Added Element % (e.g. Ele Release)</label>
-        <input type="number" id="addElePercent" value="0" min="0" oninput="calculateDamage()">
-    </div>
+		<!-- Ele % increase Input -->
+		<div class="input-group">
+			<label for="addElePercent">Added Ele % (e.g. Ele Release)</label>
+			<input type="number" id="addElePercent" value="0" min="0" oninput="calculateDamage()">
+		</div>
 
-    <!-- Ele % increase Input -->
-    <div class="input-group">
-        <label for="addDamagePercent">Added Damage % (e.g. Fighting Spirit)</label>
-        <input type="number" id="addDamagePercent" value="0" min="0" oninput="calculateDamage()">
-    </div>
+		<!-- Ele % increase Input -->
+		<div class="input-group">
+			<label for="addDamagePercent">Added Damage % (e.g. Fighting Spirit)</label>
+			<input type="number" id="addDamagePercent" value="0" min="0" oninput="calculateDamage()">
+		</div>
+	</fieldset>
 
 
 
@@ -209,8 +241,8 @@
 
     <!-- Output Box -->
     <div class="result-box">
-        <div class="result-label">Highest Damage per Hit</div>
-        <div class="result-value" id="finalDamage">0</div>
+        <div class="result-label">Highest Damage</div>
+        <div class="result-value" id="finalDamage">3</div>
         <!-- <div class="math-breakdown" id="breakdownText">Loading formula...</div> -->
     </div>
 </div>
@@ -218,19 +250,19 @@
 <script>
 function calculateDamage() {
     // 1. Gather values from the input fields
-    const rawAtk = Math.max(0, parseFloat(document.getEleById('rawAtk').value) || 0);
-    const eleAtk = Math.max(0, parseFloat(document.getEleById('eleAtk').value) || 0);
-    const addFlatRaw = Math.max(0, parseFloat(document.getEleById('addFlatRaw').value) || 0);
-    const addRawPercent = Math.max(0, parseFloat(document.getEleById('addRawPercent').value) || 0);
-    const addFlatEle = Math.max(0, parseFloat(document.getEleById('addFlatEle').value) || 0);
-    const addElePercent = Math.max(0, parseFloat(document.getEleById('addElePercent').value) || 0);
-    const addDamagePercent = Math.max(0, parseFloat(document.getEleById('addDamagePercent').value) || 0);
-    const eleWeakness = parseFloat(document.getEleById('eleWeakness').value);
+    const weaponRawAtk = Math.max(0, parseFloat(document.getElementById('weaponRawAtk').value) || 0);
+    const weaponEleAtk = Math.max(0, parseFloat(document.getElementById('weaponEleAtk').value) || 0);
+    const addFlatRaw = Math.max(0, parseFloat(document.getElementById('addFlatRaw').value) || 0);
+    const addRawPercent = Math.max(0, parseFloat(document.getElementById('addRawPercent').value) || 0);
+    const addFlatEle = Math.max(0, parseFloat(document.getElementById('addFlatEle').value) || 0);
+    const addElePercent = Math.max(0, parseFloat(document.getElementById('addElePercent').value) || 0);
+    const addDamagePercent = Math.max(0, parseFloat(document.getElementById('addDamagePercent').value) || 0);
+    const eleWeakness = parseFloat(document.getElementById('eleWeakness').value);
 
 	// 2. Calculate Raw & Ele after bonus
-	const totalRaw = (rawAtk + addFlatRaw) * addRawPercent / 100
-	const totalEle = (eleAtk + addFlatEle) * addElePercent / 100 * eleWeakness
-	const totalDamage = (Math.floor(totalRaw) + Math.floor(totalEle)) * addDamagePercent
+	const totalRaw = (weaponRawAtk + addFlatRaw) * (1 + (addRawPercent / 100))
+	const totalEle = (weaponEleAtk + addFlatEle) * (1 + (addElePercent / 100 * eleWeakness))
+	const totalDamage = (Math.floor(totalRaw) + Math.floor(totalEle)) * (1 + (addDamagePercent / 100))
 
   
     // Step C: Calculate damage before Final Ceiling Rounding
@@ -243,12 +275,14 @@ function calculateDamage() {
     const finalDamage = Math.ceil(rawCalculatedDamage);
 
     // 3. Render the output to the UI
-    document.getEleById('finalDamage').innerText = finalDamage;
-    
+    document.getElementById('finalDamage').innerText = finalDamage;
+    console.log("abc")
+	console.log(totalRaw)
+	console.log("123")
     // 4. Update the technical breakdown text for reference
-    document.getEleById('breakdownText').innerHTML = 
-        `Base: (${totalRaw} Raw + ${totalEle} Ele) = ${baseDamageSum}<br>` +
-        `Math: ⌈${baseDamageSum} × ${critMultiplier}x Crit × ${mv} MV × ${hzv} HZV⌉ = ${finalDamage}`;
+    <!-- document.getElementById('breakdownText').innerHTML =  -->
+        <!-- `Base: (${totalRaw} Raw + ${totalEle} Ele) = ${baseDamageSum}<br>` + -->
+        <!-- `Math: ⌈${baseDamageSum} × ${critMultiplier}x Crit × ${mv} MV × ${hzv} HZV⌉ = ${finalDamage}`; -->
 }
 
 // Run calculation automatically on page load
