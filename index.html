@@ -148,7 +148,7 @@
 <body>
 
 <div class="calculator-card">
-    <h1>MHN Damage Calculator v0.2.1</h1>
+    <h1>MHN Damage Calculator v0.2.2</h1>
 	<p class="subtitle">
         <a href="https://linktr.ee/porridgehouseprints" target="_blank" style="color: white; text-decoration: none;">
             By YuzuRedTea
@@ -160,23 +160,21 @@
 
 	<fieldset class="input-group-box">
 		<legend>Weapon Base Stats</legend>
-		<!-- Raw Attack Input -->
+		
 		<div class="input-group">
 			<label for="weaponRawAtk">Raw Attack</label>
 			<input type="number" id="weaponRawAtk" value="1000" min="0" oninput="calculateDamage()">
 		</div>
 
-		<!-- Ele Input -->
 		<div class="input-group">
 			<label for="weaponEleAtk">Element Attack</label>
 			<input type="number" id="weaponEleAtk" value="1000" min="0" oninput="calculateDamage()">
 		</div>
 		
-		<!-- Crit Input -->
-		<!-- <div class="input-group"> -->
-			<!-- <label for="weaponCrit">Crit Chance (%)</label> -->
-			<!-- <input type="number" id="weaponCrit" value="0" min="0" oninput="calculateDamage()"> -->
-		<!-- </div> -->
+		<div class="input-group">
+			<label for="weaponCrit">Crit Chance (%)</label>
+			<input type="number" id="weaponCrit" value="0" min="-100" max = "100" oninput="calculateDamage()">
+		</div>
 	</fieldset>
 
 	<fieldset class="input-group-box">
@@ -223,33 +221,36 @@
 			<label for="addDamagePercent">Added Damage % (e.g. Fighting Spirit)</label>
 			<input type="number" id="addDamagePercent" value="0" min="0" oninput="calculateDamage()">
 		</div>
+		
+		<!-- Additonal Crit Chance % Input -->
+		<div class="input-group">
+			<label for="addCritChance">Additional Crit Chance % (e.g. Crit Eye)</label>
+			<input type="number" id="addCritChance" value="0" min="-100" oninput="calculateDamage()">
+		</div>
+		
+		<!-- Additonal Crit Dmg % Input -->
+		<div class="input-group">
+			<label for="addCritDmg">Additional Crit Damage % (e.g. Crit Boost)</label>
+			<input type="number" id="addCritDmg" value="0" min="0" oninput="calculateDamage()">
+		</div>
+		
+		<div class="input-group">
+			<label for="critFero">Critical Ferocity</label>
+			<select id="critFero" onchange="calculateDamage()">
+				<option value="0">Critical Ferocity Level 0</option>
+				<option value="1.5">Critical Ferocity Level 1</option>
+				<option value="1.75">Critical Ferocity Level 2</option>
+				<option value="2.0">Critical Ferocity Level 3</option>
+				<option value="2.25">Critical Ferocity Level 4</option>
+				<option value="2.5">Critical Ferocity Level 5</option>
+			</select>
+		</div>
 	</fieldset>
-
-
-
-    <!-- Motion Value Input 
-    <div class="input-group">
-        <label for="motionValue">Motion Value (MV %)</label>
-        <input type="number" id="motionValue" value="30" min="0" max="500" oninput="calculateDamage()">
-    </div> -->
-
-    <!-- Hitzone Value Input
-    <div class="input-group">
-        <label for="hitzoneValue">Hitzone Value (HZV %)</label>
-        <input type="number" id="hitzoneValue" value="130" min="0" max="300" oninput="calculateDamage()">
-    </div> -->
-
-    <!-- Critical Hit Toggle
-    <label class="checkbox-group">
-        <input type="checkbox" id="isCrit" onchange="calculateDamage()">
-        <span>Is it a Critical Hit? (1.25x Modifier)</span>
-    </label> -->
 
     <!-- Output Box -->
     <div class="result-box">
         <div class="result-label">Highest Damage</div>
         <div class="result-value" id="finalDamage">3</div>
-        <!-- <div class="math-breakdown" id="breakdownText">Loading formula...</div> -->
     </div>
 </div>
 
@@ -258,34 +259,57 @@ function calculateDamage() {
     // 1. Gather values from the input fields
     const weaponRawAtk = Math.max(0, parseFloat(document.getElementById('weaponRawAtk').value) || 0);
     const weaponEleAtk = Math.max(0, parseFloat(document.getElementById('weaponEleAtk').value) || 0);
+    const weaponCrit = Math.max(-100, parseFloat(document.getElementById('weaponCrit').value) || 0);
     const addFlatRaw = Math.max(0, parseFloat(document.getElementById('addFlatRaw').value) || 0);
     const addRawPercent = Math.max(0, parseFloat(document.getElementById('addRawPercent').value) || 0);
     const addFlatEle = Math.max(0, parseFloat(document.getElementById('addFlatEle').value) || 0);
     const addElePercent = Math.max(0, parseFloat(document.getElementById('addElePercent').value) || 0);
     const addDamagePercent = Math.max(0, parseFloat(document.getElementById('addDamagePercent').value) || 0);
     const eleWeakness = parseFloat(document.getElementById('eleWeakness').value);
+    const addCritChance = Math.max(-100, parseFloat(document.getElementById('addCritChance').value) || 0);
+    const addCritDmg = Math.max(0, parseFloat(document.getElementById('addCritDmg').value) || 0);
+    const critFero = parseFloat(document.getElementById('critFero').value);
 
 	// 2. Calculate Raw & Ele after bonus
-	const totalRaw = (weaponRawAtk + addFlatRaw) * (1 + (addRawPercent / 100))
-	const totalEle = (weaponEleAtk + addFlatEle) * (1 + (addElePercent / 100 * eleWeakness))
-	const totalDamage = (Math.floor(totalRaw) + Math.floor(totalEle)) * (1 + (addDamagePercent / 100))
+	const totalRaw = (weaponRawAtk + addFlatRaw) * (1 + (addRawPercent / 100));
+	const totalEle = (weaponEleAtk + addFlatEle) * (1 + (addElePercent / 100 * eleWeakness));
+	const totalDamage = (Math.floor(totalRaw) + Math.floor(totalEle)) * (1 + (addDamagePercent / 100));
 
-  
-    // Step C: Calculate damage before Final Ceiling Rounding
-    // Formula: (Raw + Ele) * Crit * MV * HZV
-    const baseDamageSum = totalDamage;
-    const rawCalculatedDamage = baseDamageSum;
-    <!-- const rawCalculatedDamage = baseDamageSum * critMultiplier * mv * hzv; -->
+	// 3. Crit
+	const finalCritChance = Math.min(1.0, ((weaponCrit + addCritChance) / 100));
+	let finalCritDmg = 0
+	let totalDamageWithCrit = 0
+
+	if (finalCritChance === 0){
+		//no need for calculation
+		totalDamageWithCrit = totalDamage
+	}
+	else if (finalCritChance > 0) {
+		//crit chance > 0, normal calc
+		finalCritDmg = 1.25 + addCritDmg
+		totalDamageWithCrit = totalDamage * finalCritDmg
+		//without crit + with crit
+		<!-- totalDamageWithCrit = (totalDamage * (1-finalCritChance)) + (totalDamage * (finalCritChance) * finalCritDmg) -->
+	}
+	else {
+	console.log(2)
+		//negative crit
+		if (critFero === 0){
+		//ignored, only care about highest possible Dmg
+			totalDamageWithCrit = totalDamage	
+		}
+		else{
+		//crit Ferocity
+			totalDamageWithCrit = totalDamage * critFero
+		}
+	}
+	
     
     // MHN applies a Ceiling function to finalize the damage tick
-    const finalDamage = Math.ceil(rawCalculatedDamage);
+    const finalDamage = Math.ceil(totalDamageWithCrit);
 
     // 3. Render the output to the UI
     document.getElementById('finalDamage').innerText = finalDamage;
-    // 4. Update the technical breakdown text for reference
-    <!-- document.getElementById('breakdownText').innerHTML =  -->
-        <!-- `Base: (${totalRaw} Raw + ${totalEle} Ele) = ${baseDamageSum}<br>` + -->
-        <!-- `Math: ⌈${baseDamageSum} × ${critMultiplier}x Crit × ${mv} MV × ${hzv} HZV⌉ = ${finalDamage}`; -->
 }
 
 // Run calculation automatically on page load
