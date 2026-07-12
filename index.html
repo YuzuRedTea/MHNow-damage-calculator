@@ -252,6 +252,12 @@
         <div class="result-label">Highest Damage</div>
         <div class="result-value" id="finalDamage">3</div>
     </div>
+	
+	<div style="text-align: center; margin-top: 16px;">
+    <button id="shareBtn" onclick="generateShareLink()" style="background-color: var(--accent-color); color: #000; border: none; padding: 10px 20px; font-weight: 700; border-radius: 6px; cursor: pointer; font-size: 0.9rem; width: 100%;">
+        🔗 Copy Share Link
+    </button>
+</div>
 </div>
 
 <script>
@@ -281,13 +287,17 @@ function calculateDamage() {
 	let totalDamageWithCrit = 0
 
 	if (finalCritChance === 0){
+	console.log(0)
 		//no need for calculation
 		totalDamageWithCrit = totalDamage
 	}
 	else if (finalCritChance > 0) {
+	console.log(1)
 		//crit chance > 0, normal calc
-		finalCritDmg = 1.25 + addCritDmg
+		finalCritDmg = 1.25 + (addCritDmg/100)
+	console.log(finalCritDmg)
 		totalDamageWithCrit = totalDamage * finalCritDmg
+	console.log(totalDamageWithCrit)
 		//without crit + with crit
 		<!-- totalDamageWithCrit = (totalDamage * (1-finalCritChance)) + (totalDamage * (finalCritChance) * finalCritDmg) -->
 	}
@@ -312,8 +322,80 @@ function calculateDamage() {
     document.getElementById('finalDamage').innerText = finalDamage;
 }
 
+function generateShareLink() {
+    // 1. Collect every single input value
+    const params = new URLSearchParams({
+	    wraw: document.getElementById('weaponRawAtk').value,
+        wele: document.getElementById('weaponEleAtk').value,
+        wcrit: document.getElementById('weaponCrit').value,
+        afraw: document.getElementById('addFlatRaw').value,
+        apRaw: document.getElementById('addRawPercent').value,
+        afEle: document.getElementById('addFlatEle').value,
+        apEle: document.getElementById('addElePercent').value,
+        aDmg: document.getElementById('addDamagePercent').value,
+        Ele: document.getElementById('eleWeakness').value,
+        cchance: document.getElementById('addCritChance').value,
+        cdmg: document.getElementById('addCritDmg').value,
+        cfero: document.getElementById('critFero').value,
+        // If you added checkboxes later, grab their status like this:
+        // useCrit: document.getElementById('useCrit').checked ? 1 : 0
+    });
+
+    // 2. Build the full URL structure
+    const shareUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+
+    // 3. Copy the URL to the clipboard
+    navigator.clipboard.writeText(shareUrl).then(() => {
+        const btn = document.getElementById('shareBtn');
+        const oldText = btn.innerText;
+        btn.innerText = "✓ Link Copied!";
+        btn.style.backgroundColor = "#4caf50"; // Turn green temporarily
+        
+        // Reset button back to orange after 2 seconds
+        setTimeout(() => {
+            btn.innerText = oldText;
+            btn.style.backgroundColor = "var(--accent-color)";
+        }, 2000);
+    }).catch(err => {
+        console.error("Failed to copy link: ", err);
+        alert("Could not auto-copy. Here is your link:\n" + shareUrl);
+    });
+}
+
+function loadSharedValues() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Helper helper function to safely set values only if they exist in the URL
+    const setVal = (id, paramName) => {
+        if (urlParams.has(paramName)) {
+            document.getElementById(id).value = urlParams.get(paramName);
+        }
+    };
+		
+    // Match your HTML element IDs to your short query codes
+    setVal('weaponRawAtk', 'wraw');
+    setVal('weaponEleAtk', 'wele');
+    setVal('weaponCrit', 'wcrit');
+    setVal('addFlatRaw', 'afraw');
+    setVal('addRawPercent', 'apRaw');
+    setVal('addFlatEle', 'afEle');
+    setVal('addElePercent', 'apEle');
+    setVal('addDamagePercent', 'aDmg');
+    setVal('eleWeakness', 'Ele');
+    setVal('addCritChance', 'cchance');
+    setVal('addCritDmg', 'cdmg');
+    setVal('critFero', 'cfero');
+
+    // Trigger calculation so the results match the loaded inputs immediately
+    calculateDamage();
+}
+
+// 🟢 CRITICAL: Replace your old standalone "calculateDamage();" call 
+// at the very bottom of the script with this:
+loadSharedValues();
+
 // Run calculation automatically on page load
-calculateDamage();
+<!-- calculateDamage(); -->
 </script>
 
 </body>
