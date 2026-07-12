@@ -131,8 +131,9 @@
 <body>
 
 <div class="calculator-card">
-    <h1>MHN Damage Calculator</h1>
-    <p class="subtitle">Basic Math & Rounding Engine</p>
+    <h1>MHN Damage Calculator v0.2</h1>
+    <p class="subtitle">Highest Damage Value</p>
+    <p class="subtitle">For now, not accounting for Crit, CritFero</p>
 
     <!-- Raw Attack Input -->
     <div class="input-group">
@@ -140,80 +141,113 @@
         <input type="number" id="rawAtk" value="800" min="0" oninput="calculateDamage()">
     </div>
 
-    <!-- Element Input -->
+    <!-- Ele Input -->
     <div class="input-group">
-        <label for="elementAtk">Weapon Element Attack</label>
-        <input type="number" id="elementAtk" value="400" min="0" oninput="calculateDamage()">
+        <label for="eleAtk">Weapon Ele Attack</label>
+        <input type="number" id="eleAtk" value="400" min="0" oninput="calculateDamage()">
     </div>
 
     <!-- Monster Weakness Toggle -->
     <div class="input-group">
-        <label for="elementWeakness">Monster Elemental Weakness</label>
-        <select id="elementWeakness" onchange="calculateDamage()">
-            <option value="1">Weak to Element (100% Value)</option>
+        <label for="eleWeakness">Monster Element Weakness</label>
+        <select id="eleWeakness" onchange="calculateDamage()">
+            <option value="1.0">Weak to Element (100% Value)</option>
+            <option value="1.5">Super Weak to Element (150% Value)</option>
             <option value="0">NOT Weak to Element (0% Value)</option>
         </select>
     </div>
 
-    <!-- Motion Value Input -->
+    <!-- Added Flat Raw Input -->
+    <div class="input-group">
+        <label for="addFlatRaw">Added Flat Raw (e.g. Attack Boost)</label>
+        <input type="number" id="addFlatRaw" value="0" min="0" oninput="calculateDamage()">
+    </div>
+
+    <!-- Raw % increase Input -->
+    <div class="input-group">
+        <label for="addRawPercent">Added Raw % (e.g. Burst)</label>
+        <input type="number" id="addRawPercent" value="0" min="0" oninput="calculateDamage()">
+    </div>
+
+    <!-- Added Flat Ele Input -->
+    <div class="input-group">
+        <label for="addFlatEle">Added Flat Ele (e.g. Fire Attack)</label>
+        <input type="number" id="addFlatEle" value="0" min="0" oninput="calculateDamage()">
+    </div>
+
+    <!-- Ele % increase Input -->
+    <div class="input-group">
+        <label for="addElePercent">Added Ele % (e.g. Ele Release)</label>
+        <input type="number" id="addElePercent" value="0" min="0" oninput="calculateDamage()">
+    </div>
+
+    <!-- Ele % increase Input -->
+    <div class="input-group">
+        <label for="addDamagePercent">Added Damage % (e.g. Fighting Spirit)</label>
+        <input type="number" id="addDamagePercent" value="0" min="0" oninput="calculateDamage()">
+    </div>
+
+
+
+    <!-- Motion Value Input 
     <div class="input-group">
         <label for="motionValue">Motion Value (MV %)</label>
         <input type="number" id="motionValue" value="30" min="0" max="500" oninput="calculateDamage()">
-    </div>
+    </div> -->
 
-    <!-- Hitzone Value Input -->
+    <!-- Hitzone Value Input
     <div class="input-group">
         <label for="hitzoneValue">Hitzone Value (HZV %)</label>
         <input type="number" id="hitzoneValue" value="130" min="0" max="300" oninput="calculateDamage()">
-    </div>
+    </div> -->
 
-    <!-- Critical Hit Toggle -->
+    <!-- Critical Hit Toggle
     <label class="checkbox-group">
         <input type="checkbox" id="isCrit" onchange="calculateDamage()">
         <span>Is it a Critical Hit? (1.25x Modifier)</span>
-    </label>
+    </label> -->
 
     <!-- Output Box -->
     <div class="result-box">
-        <div class="result-label">Estimated Damage per Hit</div>
+        <div class="result-label">Highest Damage per Hit</div>
         <div class="result-value" id="finalDamage">0</div>
-        <div class="math-breakdown" id="breakdownText">Loading formula...</div>
+        <!-- <div class="math-breakdown" id="breakdownText">Loading formula...</div> -->
     </div>
 </div>
 
 <script>
 function calculateDamage() {
     // 1. Gather values from the input fields
-    const rawAtk = Math.max(0, parseFloat(document.getElementById('rawAtk').value) || 0);
-    const elementAtk = Math.max(0, parseFloat(document.getElementById('elementAtk').value) || 0);
-    const elementWeakness = parseFloat(document.getElementById('elementWeakness').value);
-    
-    // Percentages are divided by 100 to convert to decimal multipliers (e.g. 30% -> 0.30)
-    const mv = (parseFloat(document.getElementById('motionValue').value) || 0) / 100;
-    const hzv = (parseFloat(document.getElementById('hitzoneValue').value) || 0) / 100;
-    
-    const isCrit = document.getElementById('isCrit').checked;
-    const critMultiplier = isCrit ? 1.25 : 1.0;
+    const rawAtk = Math.max(0, parseFloat(document.getEleById('rawAtk').value) || 0);
+    const eleAtk = Math.max(0, parseFloat(document.getEleById('eleAtk').value) || 0);
+    const addFlatRaw = Math.max(0, parseFloat(document.getEleById('addFlatRaw').value) || 0);
+    const addRawPercent = Math.max(0, parseFloat(document.getEleById('addRawPercent').value) || 0);
+    const addFlatEle = Math.max(0, parseFloat(document.getEleById('addFlatEle').value) || 0);
+    const addElePercent = Math.max(0, parseFloat(document.getEleById('addElePercent').value) || 0);
+    const addDamagePercent = Math.max(0, parseFloat(document.getEleById('addDamagePercent').value) || 0);
+    const eleWeakness = parseFloat(document.getEleById('eleWeakness').value);
 
-    // 2. MHN Specific Rounding Logic
-    // Step A & B: Process total Attack and Element bases (using Floor functions for modifiers if present)
-    const totalRaw = Math.floor(rawAtk);
-    const totalElement = elementWeakness === 1 ? Math.floor(elementAtk) : 0;
-    
+	// 2. Calculate Raw & Ele after bonus
+	const totalRaw = (rawAtk + addFlatRaw) * addRawPercent / 100
+	const totalEle = (eleAtk + addFlatEle) * addElePercent / 100 * eleWeakness
+	const totalDamage = (Math.floor(totalRaw) + Math.floor(totalEle)) * addDamagePercent
+
+  
     // Step C: Calculate damage before Final Ceiling Rounding
-    // Formula: (Raw + Element) * Crit * MV * HZV
-    const baseDamageSum = totalRaw + totalElement;
-    const rawCalculatedDamage = baseDamageSum * critMultiplier * mv * hzv;
+    // Formula: (Raw + Ele) * Crit * MV * HZV
+    const baseDamageSum = totalDamage;
+    const rawCalculatedDamage = baseDamageSum;
+    <!-- const rawCalculatedDamage = baseDamageSum * critMultiplier * mv * hzv; -->
     
     // MHN applies a Ceiling function to finalize the damage tick
     const finalDamage = Math.ceil(rawCalculatedDamage);
 
     // 3. Render the output to the UI
-    document.getElementById('finalDamage').innerText = finalDamage;
+    document.getEleById('finalDamage').innerText = finalDamage;
     
     // 4. Update the technical breakdown text for reference
-    document.getElementById('breakdownText').innerHTML = 
-        `Base: (${totalRaw} Raw + ${totalElement} Ele) = ${baseDamageSum}<br>` +
+    document.getEleById('breakdownText').innerHTML = 
+        `Base: (${totalRaw} Raw + ${totalEle} Ele) = ${baseDamageSum}<br>` +
         `Math: ⌈${baseDamageSum} × ${critMultiplier}x Crit × ${mv} MV × ${hzv} HZV⌉ = ${finalDamage}`;
 }
 
